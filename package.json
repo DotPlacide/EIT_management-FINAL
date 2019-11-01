@@ -1,5 +1,5 @@
 {
-  "name": "meteor-application-template-react",
+  "name": "meteor-application-react",
   "private": true,
   "dependencies": {
     "@babel/runtime": "^7.5.4",
@@ -21,18 +21,29 @@
     "uniforms-bridge-simple-schema-2": "^2.2.0",
     "uniforms-semantic": "^2.2.0"
   },
+  "meteor": {
+    "mainModule": {
+      "client": "client/main.js",
+      "server": "server/main.js"
+    },
+    "testModule": "tests/main.js"
+  },
   "devDependencies": {
     "babel-eslint": "^10.0.2",
+    "chai": "^4.2.0",
     "eslint": "^6.0.1",
-    "eslint-utils": ">=1.4.1",
     "eslint-config-airbnb": "^17.1.1",
     "eslint-plugin-import": "^2.18.0",
     "eslint-plugin-jsx-a11y": "^6.2.3",
     "eslint-plugin-meteor": "^5.1.0",
-    "eslint-plugin-react": "^7.14.2"
+    "eslint-plugin-react": "^7.14.2",
+    "eslint-utils": ">=1.4.1"
   },
   "scripts": {
-    "start": "meteor --no-release-check --settings ../config/settings.development.json",
-    "lint": "eslint --quiet --ext .jsx --ext .js ./imports"
-  }
+   "start": "meteor run",
+   "test": "meteor test --once --driver-package meteortesting:mocha",
+   "test-app": "TEST_WATCH=1 meteor test --full-app --driver-package meteortesting:mocha",
+   "visualize": "meteor --production --extra-packages bundle-visualizer",
+   "lint": "eslint --quiet --ext .jsx --ext .js ./imports"
+ }
 }
