@@ -74,6 +74,63 @@ if (Meteor.isServer) {
 
               assert.equal(Stuffs.find().count(), 0);
             });
+            it("cannot delete someone else's task", () =>{
+
+        // Set  to private
+        Stuffs.update(taskId, { $set: { private: true } });
+
+        const userId = Random.id();
+
+        const deleteList = Meteor.server.method_handlers['Stuffs.remove'];
+        const FakeId = { userId };
+
+        assert.throws(function() {
+          deleteTask.apply(FakeId, [listId]);
+        }, Meteor.Error, '[not-authorized]');
+
+        // Verify  task is'nt deleted
+        assert.equal(Stuffs.find().count(), 1);
+      });
+
+          it('can set own task checked' , ()=>{
+            const setChecked =Meteor.server.method_handlers['tasks.setChecked'] ;
+            const FakeId = {userId};
+            setChecked.apply(FakeId , [listId, true]);
+            assert.equal(Stuffs.find({checked:true}).count(),1);
+          });
+
+          it("cannot set someone else's task checked" ,()=> {
+            Stuffs.update(taskId, {$set: {private : true }});
+
+            const userId = Random.id();
+            const setChecked = Meteor.server.method_handlers['Stuffs.setChecked'];
+            const FakeId = { userId };
+
+            assert.throw(()=>{
+              setChecked.apply(FakeId , [listId , true]);
+            } , Meteor.Error, '[not-authorized]');
+            assert.equal(Stuffs.find({checked:true}).count(),0);
+          });
+
+          it('can set own task private', () => {
+            const setTaskPrivate = Meteor.server.method_handlers['Stuffs.setPrivate'];
+            const FakeId = { userId };
+            setTaskPrivate.apply(FakeId, [listId, true]);
+            assert.equal(Stuffs.find({private: true}).count(), 1);
+          });
+          it("cannot set someone else's task private", function() {
+            const userId = Random.id();
+
+            const setPrivate = Meteor.server.method_handlers['Stuffs.setPrivate'];
+            const FakeId = { userId };
+
+
+            assert.throws(function() {
+              setPrivate.apply(FakeId, [listId, true]);
+            }, Meteor.Error, '[not-authorized]');
+
+            assert.equal(Tasks.find({private: true}).count(), 0);
+  })
     });
   });
 }
