@@ -36,7 +36,7 @@ if (Meteor.isServer) {
 
 
       //Insert TEST
-      it('can insert task' , ()=>{
+      it('can insert EIT' , ()=>{
         let name: 'placide',
         let surname: 'jean',
         let age: 22,
@@ -48,7 +48,7 @@ if (Meteor.isServer) {
         assert.equal(Stuffs.find().count(), 2);
       });
 
-      it('cannot insert task if not logged in ' , ()=>{
+      it('cannot insert EIT if not logged in ' , ()=>{
         let name: 'placide',
         let surname: 'jean',
         let age: 22,
@@ -62,7 +62,7 @@ if (Meteor.isServer) {
 
       });
             //Delete
-            it('can delete owned task', () => {
+            it('can delete owned EIT', () => {
 
               const deleteList = Meteor.server.method_handlers['Stuffs.remove'];
 
@@ -74,7 +74,7 @@ if (Meteor.isServer) {
 
               assert.equal(Stuffs.find().count(), 0);
             });
-            it("cannot delete someone else's task", () =>{
+            it("cannot delete someone else's EIT", () =>{
 
         // Set  to private
         Stuffs.update(taskId, { $set: { private: true } });
@@ -99,7 +99,7 @@ if (Meteor.isServer) {
             assert.equal(Stuffs.find({checked:true}).count(),1);
           });
 
-          it("cannot set someone else's task checked" ,()=> {
+          it("cannot set someone else's EIT checked" ,()=> {
             Stuffs.update(taskId, {$set: {private : true }});
 
             const userId = Random.id();
@@ -112,13 +112,13 @@ if (Meteor.isServer) {
             assert.equal(Stuffs.find({checked:true}).count(),0);
           });
 
-          it('can set own task private', () => {
+          it('can set own EIT private', () => {
             const setTaskPrivate = Meteor.server.method_handlers['Stuffs.setPrivate'];
             const FakeId = { userId };
             setTaskPrivate.apply(FakeId, [listId, true]);
             assert.equal(Stuffs.find({private: true}).count(), 1);
           });
-          it("cannot set someone else's task private", function() {
+          it("cannot set someone else's EIT private", function() {
             const userId = Random.id();
 
             const setPrivate = Meteor.server.method_handlers['Stuffs.setPrivate'];
@@ -131,6 +131,19 @@ if (Meteor.isServer) {
 
             assert.equal(Tasks.find({private: true}).count(), 0);
   })
+      it('can view own EIT and non-private tasks', () => {
+       const userId = Random.id()
+       Stuffs.insert({
+        let name: 'placide',
+        let surname: 'jean',
+        let age: 22,
+        let owner: userId,
+        let country: 'Congo' ;
+       })
+       const FakeId = { userId }
+       const LIstsPublication = Meteor.server.publish_handlers.Stuffs
+       assert.strictEqual(LIstsPublication.apply(invocation).count(), 2)
+     })
     });
   });
 }
